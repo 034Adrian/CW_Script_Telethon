@@ -5,7 +5,7 @@ import random, asyncio, time, aiocron, pytz
 loop1 = asyncio.get_event_loop()
 
 api_id = 12345678
-api_hash = ""
+api_hash = "pon tu api hash aqui"
 phone= "Nombre_session"
 
 CHAT_WARS = 408101137
@@ -47,13 +47,13 @@ async def clic_valley(event):
         for button in bline:
             if 'Valley' in button.button.text:
                 await button.click()
-## bucle de arenas 
+##  arenas 
 async def arenas():
     await client1.send_message('chtwrsbot', '▶️Fast fight')
-
+#reporte
 async def reporte():
     await client1.send_message('chtwrsbot', '/report')
-
+#quest
 async def menu_quest():
     await client1.send_message('chtwrsbot', '🗺Quests')
 ## batallas
@@ -93,6 +93,7 @@ async def a_shark():
 async def reenviar_lycaon(event):
     await event.forward_to('LycaonBot')
 
+# todo lo que utiliza CW
 @client1.on(events.NewMessage(chats=('chtwrsbot'), incoming = True))
 async def my_event_handler(event):
     
@@ -110,6 +111,7 @@ async def my_event_handler(event):
         async with client1.conversation('chtwrsbot'):
             await reenviar_lycaon(event)
 
+# iniciando los quest despues de cada batalla
     if 'Your result on the battlefield:' in event.raw_text:
         async with client1.conversation('chtwrsbot'):
             await reenviar_lycaon(event)
@@ -125,11 +127,14 @@ async def my_event_handler(event):
         time.sleep(random.randint(1, 10))
         await menu_quest()
 
+#set defensa si se acaba la stamina
+# solo si el modulo de batallas no funciona 
     if 'Not enough stamina.' in event.raw_text:
         time.sleep(random.randint(1, 10))
         await defend()
 
-##quests normales 
+##quests normales y de PS
+#se puede cambiar la llamita por el sombrero
     if '🌲Forest' in event.raw_text:
         time.sleep(random.randint(1, 3))
 
@@ -162,6 +167,7 @@ async def my_event_handler(event):
     if 'You found hidden' in event.raw_text:
         await client1.forward_messages(BOTNIATO3, event.message)       
 
+## solicitando reporte segun la notificacion de batalla en el squad
 @client1.on(events.NewMessage(chats=(-1001510356585), incoming = True))
 async def my_event_handler(event):
     if 'Battle results:' in event.raw_text:
@@ -169,12 +175,16 @@ async def my_event_handler(event):
             time.sleep(random.randint(600, 610))
             await reporte()
 
+## para rangers 
+# equipar flecas utilizado la notificacion de Lycaon
 @client1.on(events.NewMessage(chats=('LycaonBot'), incoming = False))
 async def my_event_handler(event):
     if 'Your arrows are getting low.' in event.raw_text:
         if 'Bodkin arrow' in event.raw_text:
             await client1.send_message('chtwrsbot', '/use_523')
 
+# poniendo ordenes segun el squad
+# alternar incoming entre True o False segun se considere
 @client1.on(events.NewMessage(chats=(-1237607365), incoming = False))
 async def my_event_handler(event):
 
@@ -209,6 +219,8 @@ async def my_event_handler(event):
             #time.sleep(1)
             #await a_deern()
 
+## handler con Botniato
+## alternar incoming entre True o False segun se considere 
 @client1.on(events.NewMessage(chats=BOTNIATO3, incoming = True))
 async def my_event_handler(event):
     if 'Órdenes para la próxima batalla' in event.raw_text:
@@ -228,7 +240,7 @@ async def order_setter():
     await client1.send_message(CHAT_WARS, target)
     print('order_set')
 
-    # Sets the order automatically
+    # poniendo orden automatica
 @aiocron.crontab(set_order_cron, tz=pytz.utc)
 async def set_order():
     await order_setter()
